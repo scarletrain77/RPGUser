@@ -1,3 +1,11 @@
+var Cache: MethodDecorator = (target: any, propertyName, desc: PropertyDescriptor) => {
+    const getter = desc.get;
+    desc.get = function () {
+        return getter.apply(this);
+    }
+    return desc;
+}
+
 class User {
     cash: number = 0;
     gold: number = 0;
@@ -20,7 +28,7 @@ class User {
         return this.heroes.filter(hero => hero.isInTeam);
     }
 
-    @Logger
+    //@Logger
     print() {
         console.log("hello");
     }
@@ -58,6 +66,11 @@ class Hero {
         var result = 0;
         this.equipments.forEach(e => result += e.attack)
         return result;
+    }
+
+    @Cache
+    get fightPower(){
+        return this.level*10;
     }
 }
 
