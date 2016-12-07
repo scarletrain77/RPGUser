@@ -1,9 +1,19 @@
 var Cache: MethodDecorator = (target: any, propertyName, desc: PropertyDescriptor) => {
-    const getter = desc.get;
-    desc.get = function () {
+    //const getter = desc.get;
+    const method = desc.value;
+    /*desc.get = function () {
         return getter.apply(this);
     }
-    return desc;
+    return desc;*/
+
+    desc.value = function(){
+        if(this["_fightPowerCache"] != null){
+            return target["fightPowerCache"];
+        }else{
+            console.log("----");
+        }
+
+    }
 }
 
 class User {
@@ -14,7 +24,6 @@ class User {
     private _level: number = 0;
 
     private _heroes: Hero[] = [];
-
     private _cacheFighterPower = 0;
     //heroesInTeam:Hero[] = [];
 
@@ -40,8 +49,8 @@ class User {
          arr.every(hero=>hero.isInteam);*/
         if (!this._cacheFighterPower) {
             var result = 0;
-            this.hearoesInTeam.forEach(hero => result += hero.getfightPower);
-            result += this.pet.getFightPower();
+            this.hearoesInTeam.forEach(hero => result += hero.getFightPower());
+            //result += this.pet.getFightPower();
             this._cacheFighterPower = result;
         }
         return this._cacheFighterPower;
@@ -68,15 +77,11 @@ class Hero {
         return this._isInTeam;
     }
 
-    getStrength() {
+    getFightPower() {
         var result = 0;
-        this._equipments.forEach(e => result += e.getStrength());
+        this._equipments.forEach(e => result += e.getFightPower());
         this._strength += result + this._level * 2;
         return this._strength;
-    }
-
-    getfightPower() {
-        return this._level * 10;
     }
 }
 
@@ -86,16 +91,17 @@ class Equipment {
     private _strength: number;
     private _quick: number;
     private _wisdom: number;
-    constructor(strength: number, quick: number, wisdom: number) {
+    constructor(strength: number, quick: number, wisdom: number, jewls:Jewel[]) {
         this._strength = strength;
         this._quick = quick;
         this._wisdom = wisdom;
         this._level = 0;
+        this._jewels = jewls;
     }
 
-    getStrength() {
+    getFightPower() {
         var result = 0;
-        this._jewels.forEach(jewel => result += jewel.getStrength());
+        this._jewels.forEach(jewel => result += jewel.getFightPower());
         this._strength = result + 2 * this._level;
         return this._strength;
     }
@@ -114,12 +120,6 @@ class Equipment {
         return this._wisdom;
     }
 
-}
-
-class Pet {
-    getFightPower() {
-        return 200;
-    }
 }
 
 class Jewel {
@@ -147,7 +147,7 @@ class Jewel {
         }
     }
 
-    getStrength() {
+    getFightPower() {
         this._strength = this._level * 2 + this._strength;
         return this._strength;
     }

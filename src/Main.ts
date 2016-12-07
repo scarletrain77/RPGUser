@@ -114,6 +114,9 @@ class Main extends egret.DisplayObjectContainer {
         var stageH: number = this.stage.stageHeight;
         sky.width = stageW;
         sky.height = stageH;
+
+        var user = new User();
+        
     }
 
     /**
