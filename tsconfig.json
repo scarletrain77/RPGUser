@@ -2,7 +2,7 @@
    "compilerOptions": {
       "target": "es5",
       "locale": "zh-CN",
-      "experimentalDecorators": true,
+      "experimentalDecorators": true
    },
    "exclude": [
       "node_modules"

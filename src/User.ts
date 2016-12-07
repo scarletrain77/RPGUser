@@ -7,25 +7,23 @@ var Cache: MethodDecorator = (target: any, propertyName, desc: PropertyDescripto
 }
 
 class User {
-    cash: number = 0;
-    gold: number = 0;
-    exp: number = 0;
-    totalExp: number = 0;
-    level: number = 0;
+    private _cash: number = 0;
+    private _gold: number = 0;
+    private _exp: number = 0;
+    private _totalExp: number = 0;
+    private _level: number = 0;
 
-    heroes: Hero[] = [];
-    pet: Pet;
+    private _heroes: Hero[] = [];
 
     private _cacheFighterPower = 0;
     //heroesInTeam:Hero[] = [];
 
-
     constructor() {
-        this.pet = new Pet();
+      
     }
 
     get hearoesInTeam() {
-        return this.heroes.filter(hero => hero.isInTeam);
+        return this._heroes.filter(hero => hero.isInTeam);
     }
 
     //@Logger
@@ -42,7 +40,7 @@ class User {
          arr.every(hero=>hero.isInteam);*/
         if (!this._cacheFighterPower) {
             var result = 0;
-            this.hearoesInTeam.forEach(hero => result += hero.fightPower);
+            this.hearoesInTeam.forEach(hero => result += hero.getfightPower);
             result += this.pet.getFightPower();
             this._cacheFighterPower = result;
         }
@@ -51,34 +49,69 @@ class User {
 }
 
 class Hero {
-    isInTeam: boolean = false;
-    equipments: Equipment[] = [];
-    hp = 50;
-    level = 1;
-    quality: number = 2.0;
-    private _cacheMaxHp;
+    private _isInTeam: boolean = false;
+    private _equipments: Equipment[] = [];
+    private _hp = 50;
+   // level = 1;
+    //quality: number = 2.0;
+    private _level: number;
+    private _strength: number;
+    private _quick: number;
+    private _wisdom: number;
+    private _cacheMaxHp: number;
 
     get maxHP() {
         return this._cacheMaxHp;
     }
 
-    get attack() {
-        var result = 0;
-        this.equipments.forEach(e => result += e.attack)
-        return result;
+    get isInTeam(){
+        return this._isInTeam;
     }
 
-    @Cache
-    get fightPower(){
-        return this.level*10;
+    getStrength() {
+        var result = 0;
+        this._equipments.forEach(e => result += e.getStrength());
+        this._strength += result + this._level * 2;
+        return this._strength;
+    }
+
+    getfightPower() {
+        return this._level * 10;
     }
 }
 
 class Equipment {
-    jewels: Jewel[] = [];
+    private _jewels: Jewel[] = [];
+    private _level: number;
+    private _strength: number;
+    private _quick: number;
+    private _wisdom: number;
+    constructor(strength: number, quick: number, wisdom: number) {
+        this._strength = strength;
+        this._quick = quick;
+        this._wisdom = wisdom;
+        this._level = 0;
+    }
 
-    get attack() {
-        return 50;
+    getStrength() {
+        var result = 0;
+        this._jewels.forEach(jewel => result += jewel.getStrength());
+        this._strength = result + 2 * this._level;
+        return this._strength;
+    }
+
+    getQuick() {
+        var result = 0;
+        this._jewels.forEach(jewel => result += jewel.getQuick());
+        this._quick = result + 2 * this._level;
+        return this._quick;
+    }
+
+    getWisdom() {
+        var result = 0;
+        this._jewels.forEach(jewel => result += jewel.getWisdom());
+        this._wisdom = result + 2 * this._level;
+        return this._wisdom;
     }
 
 }
@@ -90,5 +123,43 @@ class Pet {
 }
 
 class Jewel {
+    private _level: number;
+    private _strength: number;
+    private _quick: number;
+    private _wisdom: number;
+    private _type: string;
+
+    constructor(type: string, level: number) {
+        this._type = type;
+        this._level = level;
+        if (this._type == "strength") {
+            this._strength = 10;
+            this._quick = 0;
+            this._wisdom = 0;
+        } else if (this._type == "quick") {
+            this._strength = 0;
+            this._quick = 10;
+            this._wisdom = 0;
+        } else if (this._type == "wisdom") {
+            this._strength = 0;
+            this._quick = 0;
+            this._wisdom = 10;
+        }
+    }
+
+    getStrength() {
+        this._strength = this._level * 2 + this._strength;
+        return this._strength;
+    }
+
+    getQuick() {
+        this._quick = this._level * 2 + this._quick;
+        return this._quick;
+    }
+
+    getWisdom() {
+        this._wisdom = this._level * 2 + this._wisdom;
+        return this._wisdom;
+    }
 
 }
