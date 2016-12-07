@@ -7,13 +7,13 @@ var Cache: MethodDecorator = (target: any, propertyName, desc: PropertyDescripto
     return desc;*/
 
     desc.value = function () {
-        //没有修改过
+        //没有修改过数据时，输出原本的
         if (this["_cacheFightPower"] != null && this["_dirty"] == false) {
-            console.log(target["_cacheFightPower"]);
+            console.log("haven't revise");
             return target["_cacheFightPower"];
         } else {
             this["_cacheFightPower"] = method.apply(this);
-            console.log(this["_cacheFightPower"]);
+            console.log("revised");
             return method.apply(this);
         }
     }
@@ -21,7 +21,6 @@ var Cache: MethodDecorator = (target: any, propertyName, desc: PropertyDescripto
 }
 
 class User {
-    private _cash: number = 0;
     private _gold: number = 0;
     private _exp: number = 0;
     private _totalExp: number = 0;
@@ -72,7 +71,7 @@ class User {
 class Hero {
     private _isInTeam: boolean = false;
     private _equipments: Equipment[] = [];
-    private _hp;
+    private _hp:number;
     // level = 1;
     //quality: number = 2.0;
     private _level: number;
