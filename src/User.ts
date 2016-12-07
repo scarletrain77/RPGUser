@@ -7,12 +7,12 @@ var Cache: MethodDecorator = (target: any, propertyName, desc: PropertyDescripto
     return desc;*/
 
     desc.value = function () {
-        if (this["_fightPowerCache"] != null) {
-            console.log(target["fightPowerCache"]);
-            return target["fightPowerCache"];
+        if (this["_cacheFightPower"] != null) {
+            console.log(target["_cacheFightPower"]);
+            return target["_cacheFightPower"];
         } else {
             console.log("----");
-            this["fightPowerCache"] = method.apply(this);
+            this["_cacheFightPower"] = method.apply(this);
             return method.apply(this);
         }
 
@@ -28,13 +28,13 @@ class User {
     private _level: number = 0;
 
     private _heroes: Hero[] = [];
-    private _cacheFighterPower = 0;
+    private _cacheFighterPower:number = 0;
     //heroesInTeam:Hero[] = [];
 
     constructor() {
     }
 
-    public addHero(hero:Hero):void{
+    public addHero(hero: Hero): void {
         hero.setIsInteam(true);
         this._heroes.push(hero);
     }
@@ -48,7 +48,7 @@ class User {
         console.log("hello");
     }
 
-   // @Cache
+    //@Cache
     getFightPower() {
         /* var arr:Hero[] = [];
          function test(hero:Hero){
@@ -58,7 +58,6 @@ class User {
         if (!this._cacheFighterPower) {
             var result = 0;
             this.hearoesInTeam.forEach(hero => result += hero.getFightPower());
-            //console.log(result);
             //result += this.pet.getFightPower();
             this._cacheFighterPower = result;
         }
@@ -77,7 +76,7 @@ class Hero {
     private _strength: number;
     private _quick: number;
     private _wisdom: number;
-    private _cacheMaxHp: number;
+    private _cacheFightPower: number;
 
     constructor(strength: number, quick: number, wisdom: number) {
         this._strength = strength;
@@ -86,28 +85,29 @@ class Hero {
         this._level = 0;
         this._hp = 50;
     }
-    get maxHP() {
-        return this._cacheMaxHp;
-    }
 
     get isInTeam() {
         return this._isInTeam;
     }
 
-    setIsInteam(is:boolean){
+    setIsInteam(is: boolean) {
         this._isInTeam = is;
     }
 
+    //@Cache
     getFightPower() {
-        var result = 0;
-        this._equipments.forEach(e => result += e.getFightPower());
-        this._strength += this._level * 0.5;
-        result += this._strength;
-        //console.log("Hero:" + result);
-        return result;
+        if (!this._cacheFightPower) {
+            var result = 0;
+            this._equipments.forEach(e => result += e.getFightPower());
+            this._strength += this._level * 0.5;
+            result += this._strength;
+            this._cacheFightPower = result;
+            //console.log("Hero:" + result);
+        }
+        return this._cacheFightPower;
     }
 
-    public addEquipment(equipment:Equipment):void{
+    public addEquipment(equipment: Equipment): void {
         this._equipments.push(equipment);
     }
 }
@@ -118,6 +118,7 @@ class Equipment {
     private _strength: number;
     private _quick: number;
     private _wisdom: number;
+    private _cacheFightPower: number;
     constructor(strength: number, quick: number, wisdom: number) {
         this._strength = strength;
         this._quick = quick;
@@ -125,17 +126,21 @@ class Equipment {
         this._level = 0;
     }
 
-    public addJewel(jewel:Jewel):void{
+    public addJewel(jewel: Jewel): void {
         this._jewels.push(jewel);
     }
 
+    //@Cache
     getFightPower() {
-        var result:number = 0;
-        this._jewels.forEach(jewel => result += jewel.getFightPower());
-        this._strength += this._level * 0.5;
-        result += this._strength;
+        if (!this._cacheFightPower) {
+            var result: number = 0;
+            this._jewels.forEach(jewel => result += jewel.getFightPower());
+            this._strength += this._level * 0.5;
+            result += this._strength;
+            this._cacheFightPower = result;
+        }
         //console.log("Equipment:" + result);
-        return result;
+        return this._cacheFightPower;
     }
 }
 
