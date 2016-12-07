@@ -93,6 +93,17 @@ var Main = (function (_super) {
         var stageH = this.stage.stageHeight;
         sky.width = stageW;
         sky.height = stageH;
+        var jewel = new Jewel("strength", 1);
+        jewel.getFightPower();
+        var equipment = new Equipment(1, 1, 1);
+        equipment.addJewel(jewel);
+        equipment.getFightPower();
+        var hero = new Hero(1, 1, 1);
+        hero.addEquipment(equipment);
+        hero.getFightPower();
+        var user = new User();
+        user.addHero(hero);
+        user.getFightPower();
     };
     /**
      * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。

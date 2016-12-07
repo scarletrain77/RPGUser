@@ -115,8 +115,18 @@ class Main extends egret.DisplayObjectContainer {
         sky.width = stageW;
         sky.height = stageH;
 
+        var jewel:Jewel = new Jewel("strength", 1);
+        jewel.getFightPower();
+        var equipment:Equipment = new Equipment(1, 1, 1);
+        equipment.addJewel(jewel);
+        equipment.getFightPower();
+        var hero:Hero = new Hero(1, 1, 1);
+        hero.addEquipment(equipment);
+        hero.getFightPower();
         var user = new User();
-        
+        user.addHero(hero);
+        user.getFightPower();
+
     }
 
     /**

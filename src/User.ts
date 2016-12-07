@@ -6,14 +6,18 @@ var Cache: MethodDecorator = (target: any, propertyName, desc: PropertyDescripto
     }
     return desc;*/
 
-    desc.value = function(){
-        if(this["_fightPowerCache"] != null){
+    desc.value = function () {
+        if (this["_fightPowerCache"] != null) {
+            console.log(target["fightPowerCache"]);
             return target["fightPowerCache"];
-        }else{
+        } else {
             console.log("----");
+            this["fightPowerCache"] = method.apply(this);
+            return method.apply(this);
         }
 
     }
+    return desc;
 }
 
 class User {
@@ -28,7 +32,11 @@ class User {
     //heroesInTeam:Hero[] = [];
 
     constructor() {
-      
+    }
+
+    public addHero(hero:Hero):void{
+        hero.setIsInteam(true);
+        this._heroes.push(hero);
     }
 
     get hearoesInTeam() {
@@ -40,7 +48,7 @@ class User {
         console.log("hello");
     }
 
-    @Cache
+   // @Cache
     getFightPower() {
         /* var arr:Hero[] = [];
          function test(hero:Hero){
@@ -50,9 +58,11 @@ class User {
         if (!this._cacheFighterPower) {
             var result = 0;
             this.hearoesInTeam.forEach(hero => result += hero.getFightPower());
+            //console.log(result);
             //result += this.pet.getFightPower();
             this._cacheFighterPower = result;
         }
+        console.log("User:" + this._cacheFighterPower);
         return this._cacheFighterPower;
     }
 }
@@ -60,8 +70,8 @@ class User {
 class Hero {
     private _isInTeam: boolean = false;
     private _equipments: Equipment[] = [];
-    private _hp = 50;
-   // level = 1;
+    private _hp;
+    // level = 1;
     //quality: number = 2.0;
     private _level: number;
     private _strength: number;
@@ -69,19 +79,36 @@ class Hero {
     private _wisdom: number;
     private _cacheMaxHp: number;
 
+    constructor(strength: number, quick: number, wisdom: number) {
+        this._strength = strength;
+        this._quick = quick;
+        this._wisdom = wisdom;
+        this._level = 0;
+        this._hp = 50;
+    }
     get maxHP() {
         return this._cacheMaxHp;
     }
 
-    get isInTeam(){
+    get isInTeam() {
         return this._isInTeam;
+    }
+
+    setIsInteam(is:boolean){
+        this._isInTeam = is;
     }
 
     getFightPower() {
         var result = 0;
         this._equipments.forEach(e => result += e.getFightPower());
-        this._strength += result + this._level * 2;
-        return this._strength;
+        this._strength += this._level * 0.5;
+        result += this._strength;
+        //console.log("Hero:" + result);
+        return result;
+    }
+
+    public addEquipment(equipment:Equipment):void{
+        this._equipments.push(equipment);
     }
 }
 
@@ -91,35 +118,25 @@ class Equipment {
     private _strength: number;
     private _quick: number;
     private _wisdom: number;
-    constructor(strength: number, quick: number, wisdom: number, jewls:Jewel[]) {
+    constructor(strength: number, quick: number, wisdom: number) {
         this._strength = strength;
         this._quick = quick;
         this._wisdom = wisdom;
         this._level = 0;
-        this._jewels = jewls;
+    }
+
+    public addJewel(jewel:Jewel):void{
+        this._jewels.push(jewel);
     }
 
     getFightPower() {
-        var result = 0;
+        var result:number = 0;
         this._jewels.forEach(jewel => result += jewel.getFightPower());
-        this._strength = result + 2 * this._level;
-        return this._strength;
+        this._strength += this._level * 0.5;
+        result += this._strength;
+        //console.log("Equipment:" + result);
+        return result;
     }
-
-    getQuick() {
-        var result = 0;
-        this._jewels.forEach(jewel => result += jewel.getQuick());
-        this._quick = result + 2 * this._level;
-        return this._quick;
-    }
-
-    getWisdom() {
-        var result = 0;
-        this._jewels.forEach(jewel => result += jewel.getWisdom());
-        this._wisdom = result + 2 * this._level;
-        return this._wisdom;
-    }
-
 }
 
 class Jewel {
@@ -148,18 +165,8 @@ class Jewel {
     }
 
     getFightPower() {
-        this._strength = this._level * 2 + this._strength;
+        this._strength += this._level * 0.5;
+        //console.log("jewel:" + this._strength);
         return this._strength;
     }
-
-    getQuick() {
-        this._quick = this._level * 2 + this._quick;
-        return this._quick;
-    }
-
-    getWisdom() {
-        this._wisdom = this._level * 2 + this._wisdom;
-        return this._wisdom;
-    }
-
 }
