@@ -137,6 +137,11 @@ class Main extends egret.DisplayObjectContainer {
         user.addHero(hero);
         user.getFightPower();
 
+        var attackText:egret.TextField = new egret.TextField();
+        attackText.text = user.getFightPower().toString();
+        attackText.x = 100;
+        attackText.y = 100;
+        this.addChild(attackText);
     }
 
     /**

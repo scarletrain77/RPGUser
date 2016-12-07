@@ -112,6 +112,11 @@ var Main = (function (_super) {
         var user = new User();
         user.addHero(hero);
         user.getFightPower();
+        var attackText = new egret.TextField();
+        attackText.text = user.getFightPower().toString();
+        attackText.x = 100;
+        attackText.y = 100;
+        this.addChild(attackText);
     };
     /**
      * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。

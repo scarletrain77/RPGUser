@@ -7,15 +7,15 @@ var Cache: MethodDecorator = (target: any, propertyName, desc: PropertyDescripto
     return desc;*/
 
     desc.value = function () {
-        if (this["_cacheFightPower"] != null) {
+        //没有修改过
+        if (this["_cacheFightPower"] != null && this["_dirty"] == false) {
             console.log(target["_cacheFightPower"]);
             return target["_cacheFightPower"];
         } else {
-            console.log("----");
             this["_cacheFightPower"] = method.apply(this);
+            console.log(this["_cacheFightPower"]);
             return method.apply(this);
         }
-
     }
     return desc;
 }
@@ -29,6 +29,8 @@ class User {
 
     private _heroes: Hero[] = [];
     private _cacheFighterPower:number = 0;
+
+    private _dirty:boolean = false;
     //heroesInTeam:Hero[] = [];
 
     constructor() {
@@ -37,6 +39,7 @@ class User {
     public addHero(hero: Hero): void {
         hero.setIsInteam(true);
         this._heroes.push(hero);
+        this._dirty = true;
     }
 
     get hearoesInTeam() {
@@ -48,7 +51,7 @@ class User {
         console.log("hello");
     }
 
-    //@Cache
+    @Cache
     getFightPower() {
         /* var arr:Hero[] = [];
          function test(hero:Hero){
@@ -94,7 +97,7 @@ class Hero {
         this._isInTeam = is;
     }
 
-    //@Cache
+   // @Cache
     getFightPower() {
         if (!this._cacheFightPower) {
             var result = 0;
